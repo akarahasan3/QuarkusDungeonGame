@@ -20,4 +20,5 @@ public interface DisneyService {
     List<CharacterDto> findCharacterByParkId(Integer id);
     List<ParkDto> findParkByCharacterName(String name);
     List<CharacterDto> findCharacterByCharacter(String name, String greeting);
+    boolean deleteCharacter(Integer id);
 }

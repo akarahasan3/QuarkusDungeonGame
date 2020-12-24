@@ -175,4 +175,14 @@ public class DisneyServiceImpl implements DisneyService {
         }
         return characterDtoList;
     }
+
+    @Override
+    public boolean deleteCharacter(Integer id) {
+        DisneyCharacter disneyCharacter = disneyCharacterRepository.findById(id);
+        if(disneyCharacter != null) {
+            disneyCharacterRepository.delete(disneyCharacter);
+            return true;
+        }
+        return false;
+    }
 }

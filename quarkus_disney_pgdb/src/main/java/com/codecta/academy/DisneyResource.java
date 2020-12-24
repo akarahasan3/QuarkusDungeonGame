@@ -160,4 +160,15 @@ public class DisneyResource {
         if(characterDtoList == null) return Response.noContent().build();
         return Response.ok(characterDtoList).build();
     }
+    @DELETE
+    @Path("/characters/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteCharacterById(@PathParam("id") Integer id)
+    {
+        boolean character = disneyService.deleteCharacter(id);
+        if(!character) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.status(Response.Status.FOUND).build();
+    }
 }

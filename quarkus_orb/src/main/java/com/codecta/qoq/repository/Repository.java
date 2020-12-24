@@ -1,6 +1,6 @@
-package com.codecta.academy.repository;
+package com.codecta.qoq.repository;
 
-import com.codecta.academy.repository.entity.ModelObject;
+import com.codecta.qoq.model.ModelObject;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -9,11 +9,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class Repository<T extends ModelObject, PK extends Serializable> {
-
     private Class<T> entityClass;
 
     protected Repository(Class<T> entityClass) {
@@ -25,8 +23,6 @@ public class Repository<T extends ModelObject, PK extends Serializable> {
 
     public T add(T modelObject)
     {
-        modelObject.setCreatedOn(LocalDateTime.now());
-        modelObject.setModifiedOn(LocalDateTime.now());
         entityManager.persist(modelObject);
         return modelObject;
     }

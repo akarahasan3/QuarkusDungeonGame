@@ -39,7 +39,7 @@ public class DisneyCharacterRepository extends Repository<DisneyCharacter, Integ
     public List<DisneyCharacter> findByCharacter(String name, String greeting)
     {
         Query query = entityManager.createQuery("SELECT d FROM DisneyCharacter d where d.name like :name and d.greeting like :greeting");
-        query.setParameter("name", '%'+searchField(name)+'%');
+        query.setParameter("name", '%'+searchField(greeting)+'%');
         query.setParameter("greeting", '%'+searchField(greeting)+'%');
         List resultList = query.getResultList();
         return (List<DisneyCharacter>) resultList;
