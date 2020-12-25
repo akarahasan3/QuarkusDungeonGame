@@ -24,6 +24,9 @@ public class Player extends ModelObject{
     @ManyToOne
     private Weapon weapon;
 
+    @OneToOne
+    private GameMap map;
+
 
     public String getName() {
         return name;
@@ -63,6 +66,14 @@ public class Player extends ModelObject{
 
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

@@ -16,4 +16,6 @@ public class QoQResource {
     public Response hello(){
         return Response.ok().build();
     }
+
+
 }

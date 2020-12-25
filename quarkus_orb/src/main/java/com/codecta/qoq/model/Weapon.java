@@ -25,6 +25,9 @@ public class Weapon extends ModelObject {
     @OneToMany(mappedBy = "weapon", fetch = FetchType.LAZY)
     private List<Monster> monster;
 
+    @OneToOne
+    private Dungeon dungeon;
+
     public String getName() {
         return name;
     }
@@ -55,6 +58,14 @@ public class Weapon extends ModelObject {
 
     public void setMonster(List<Monster> monster) {
         this.monster = monster;
+    }
+
+    public Dungeon getDungeon() {
+        return dungeon;
+    }
+
+    public void setDungeon(Dungeon dungeon) {
+        this.dungeon = dungeon;
     }
 
     @Override

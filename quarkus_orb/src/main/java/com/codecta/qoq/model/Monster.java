@@ -23,6 +23,9 @@ public class Monster extends ModelObject {
     @ManyToOne
     private Weapon weapon;
 
+    @OneToOne
+    private Dungeon dungeon;
+
     public String getName() {
         return name;
     }
@@ -53,6 +56,14 @@ public class Monster extends ModelObject {
 
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+    }
+
+    public Dungeon getDungeon() {
+        return dungeon;
+    }
+
+    public void setDungeon(Dungeon dungeon) {
+        this.dungeon = dungeon;
     }
 
     @Override
