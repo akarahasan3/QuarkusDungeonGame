@@ -2,6 +2,7 @@ package com.codecta.qoq.services.dto;
 
 public class DungeonDto {
     private Integer id;
+    private Integer healing_potion;
     private Integer mapId;
     private Integer monsterId;
     private Integer weaponId;
@@ -12,6 +13,14 @@ public class DungeonDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getHealing_potion() {
+        return healing_potion;
+    }
+
+    public void setHealing_potion(Integer healing_potion) {
+        this.healing_potion = healing_potion;
     }
 
     public Integer getMapId() {

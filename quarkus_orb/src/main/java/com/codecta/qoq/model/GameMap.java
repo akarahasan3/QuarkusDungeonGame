@@ -1,6 +1,7 @@
 package com.codecta.qoq.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class GameMap extends ModelObject{
     private Integer id;
 
     @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-    private List<Dungeon> dungeons;
+    private List<Dungeon> dungeons = new ArrayList<>();
 
     @OneToOne
     private Player player;

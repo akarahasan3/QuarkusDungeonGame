@@ -2,6 +2,8 @@ package com.codecta.qoq.model;
 
 import javax.persistence.*;
 
+@Entity
+@Table(schema = "quarkusorb", name = "DUNGEON")
 public class Dungeon extends ModelObject {
     @SequenceGenerator(
             name = "DungeonSeq",
@@ -12,6 +14,8 @@ public class Dungeon extends ModelObject {
     @Id
     @Column(name = "ID", nullable = false)
     private Integer id;
+
+    private Integer healing_potion;
 
     @ManyToOne
     private GameMap map;
@@ -49,5 +53,13 @@ public class Dungeon extends ModelObject {
 
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+    }
+
+    public Integer getHealing_potion() {
+        return healing_potion;
+    }
+
+    public void setHealing_potion(Integer healing_potion) {
+        this.healing_potion = healing_potion;
     }
 }

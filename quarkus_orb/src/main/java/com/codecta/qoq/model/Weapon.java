@@ -1,6 +1,7 @@
 package com.codecta.qoq.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,10 +21,10 @@ public class Weapon extends ModelObject {
     private Integer damage;
 
     @OneToMany(mappedBy = "weapon", fetch = FetchType.LAZY)
-    private List<Player> players;
+    private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "weapon", fetch = FetchType.LAZY)
-    private List<Monster> monster;
+    private List<Monster> monster = new ArrayList<>();
 
     @OneToOne
     private Dungeon dungeon;
