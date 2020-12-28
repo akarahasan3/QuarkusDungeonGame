@@ -23,7 +23,7 @@ public class Monster extends ModelObject {
     @ManyToOne
     private Weapon weapon;
 
-    @OneToOne
+    @OneToOne(mappedBy = "monster")
     private Dungeon dungeon;
 
     public String getName() {

@@ -17,15 +17,27 @@ public class GameMap extends ModelObject{
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @Column(name = "story", nullable = false)
+    private String story = "When the hero is out wandering the cave or is otherwise all alone, a dying man bumps into him, hands him a scribbled map, says a few words, and dies. The map shows a treasure of some kind but is otherwise scribbled. Good luck adventurer!";
+
     @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
     private List<Dungeon> dungeons = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(schema = "quarkusorb", name = "map_player",
+            joinColumns =
+                    { @JoinColumn(name = "map_id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "player_id") })
     private Player player;
 
     @Override
     public Integer getId() {
         return this.id;
+    }
+
+    public String getStory() {
+        return story;
     }
 
     public List<Dungeon> getDungeons() {

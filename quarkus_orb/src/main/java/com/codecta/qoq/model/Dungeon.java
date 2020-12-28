@@ -20,10 +20,18 @@ public class Dungeon extends ModelObject {
     @ManyToOne
     private GameMap map;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(schema = "quarkusorb", name = "DUNG_MONSTER",
+            joinColumns = { @JoinColumn(name = "DUNGEON_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "MONSTER_ID") })
     private Monster monster;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(schema = "quarkusorb", name = "dung_weapon",
+            joinColumns =
+                    { @JoinColumn(name = "dungeon_id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "weapon_id") })
     private Weapon weapon;
 
     @Override

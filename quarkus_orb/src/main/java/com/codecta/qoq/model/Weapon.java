@@ -26,7 +26,7 @@ public class Weapon extends ModelObject {
     @OneToMany(mappedBy = "weapon", fetch = FetchType.LAZY)
     private List<Monster> monster = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "weapon")
     private Dungeon dungeon;
 
     public String getName() {

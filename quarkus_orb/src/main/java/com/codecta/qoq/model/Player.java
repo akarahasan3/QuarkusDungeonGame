@@ -24,7 +24,7 @@ public class Player extends ModelObject{
     @ManyToOne
     private Weapon weapon;
 
-    @OneToOne
+    @OneToOne(mappedBy = "player")
     private GameMap map;
 
 

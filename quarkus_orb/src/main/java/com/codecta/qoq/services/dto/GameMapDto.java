@@ -1,9 +1,12 @@
 package com.codecta.qoq.services.dto;
 
+import com.codecta.qoq.model.Dungeon;
+
 import java.util.List;
 
 public class GameMapDto {
     private Integer id;
+    private String story;
     private List<DungeonDto> dungeons;
     private Integer playerId;
 
@@ -13,6 +16,14 @@ public class GameMapDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getStory() {
+        return story;
+    }
+
+    public void setStory(String story) {
+        this.story = story;
     }
 
     public List<DungeonDto> getDungeons() {
@@ -30,4 +41,5 @@ public class GameMapDto {
     public void setPlayerId(Integer playerId) {
         this.playerId = playerId;
     }
+
 }
