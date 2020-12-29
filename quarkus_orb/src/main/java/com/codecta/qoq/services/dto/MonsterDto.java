@@ -10,6 +10,15 @@ public class MonsterDto {
     private Integer damage;
     private Integer weaponId;
     private Integer dungeonId;
+    private Integer playerHealth;
+
+    public Integer getPlayerHealth() {
+        return playerHealth;
+    }
+
+    public void setPlayerHealth(Integer playerHealth) {
+        this.playerHealth = playerHealth;
+    }
 
     public Integer getId() {
         return id;

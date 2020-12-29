@@ -46,4 +46,6 @@ public class DungeonDto {
     public void setWeaponId(Integer weaponId) {
         this.weaponId = weaponId;
     }
+
+
 }

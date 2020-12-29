@@ -20,7 +20,7 @@ public class GameMap extends ModelObject{
     @Column(name = "story", nullable = false)
     private String story = "When the hero is out wandering the cave or is otherwise all alone, a dying man bumps into him, hands him a scribbled map, says a few words, and dies. The map shows a treasure of some kind but is otherwise scribbled. Good luck adventurer!";
 
-    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "map")
     private List<Dungeon> dungeons = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)

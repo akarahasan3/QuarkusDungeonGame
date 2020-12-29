@@ -79,19 +79,31 @@ public class QoQServicesImplementation implements QoQServices {
         }
         return weaponDtoList;
     }
+    private MonsterDto finalBoss(){
+        ModelMapper modelMapper = new ModelMapper();
+        Monster monster=new Monster();
+        Weapon weapon = new Weapon();
+        weapon.setName("Orb of Quarkus");
+        weapon.setDamage(9);
+        weapon = weaponRepository.add(weapon);
+        monster.setName("Quarken");
+        monster.setHealth(40);
+        monster.setDamage(3);
+        monster.setWeapon(weapon);
+        monster = monsterRepository.add(monster);
+        return modelMapper.map(monster, MonsterDto.class);
+    }
 
     @Override
     public GameMapDto createMap(){
-        Integer brojac = 9;
         ModelMapper mapper = new ModelMapper();
-        System.out.println(brojac);
         GameMap map = new GameMap();
         Player player = new Player();
-        player.setDamage(3);
-        player.setHealing_potion(0);
-        player.setHealth(20);
+        player.setDamage(5);
+        player.setHealing_potion(5);
+        player.setHealth(30);
         player.setWeapon(null);
-        player.setName("Ajdin");
+        player.setName("Legolas");
         player = playerRepository.add(player);
         map.setPlayer(player);
         List<DungeonDto> dungeonDtoList = new ArrayList<>(10);
@@ -134,10 +146,21 @@ public class QoQServicesImplementation implements QoQServices {
             dungeonDtoList.add(modelMapper.map(dungeon, DungeonDto.class));
         }
         Collections.shuffle(dungeonDtoList);
-        //ovdje final boss treba dodati
-        for (DungeonDto dungeon:
+
+        Dungeon dungeon = new Dungeon();
+        Monster boss=monsterRepository.findById(finalBoss().getId());
+        dungeon.setMap(map);
+        dungeon.setMonster(boss);
+        dungeon.setWeapon(null);
+        dungeon.setHealing_potion(null);
+        dungeon = dungeonRepository.add(dungeon);
+        boss.setDungeon(dungeon);
+        monsterRepository.save(boss);
+        dungeonDtoList.add(mapper.map(dungeon, DungeonDto.class));
+
+        for (DungeonDto dungeondto:
              dungeonDtoList) {
-            Dungeon dungeon1 = mapper.map(dungeon, Dungeon.class);
+            Dungeon dungeon1 = dungeonRepository.findById(dungeondto.getId());
             map.getDungeons().add(dungeon1);
         }
         map = gameMapRepository.add(map);
@@ -146,13 +169,26 @@ public class QoQServicesImplementation implements QoQServices {
 
     @Override
     public DungeonDto getNextDungeon(GameMapDto gameMapDto) {
-        if(gameMapDto == null) return null;
-        ModelMapper modelMapper = new ModelMapper();
-        Dungeon dungeon = dungeonRepository.findById(gameMapDto.getDungeons().get(0).getId());
         GameMap gameMap = gameMapRepository.findById(gameMapDto.getId());
+        if (gameMap == null) return null;
+        ModelMapper modelMapper = new ModelMapper();
+        Dungeon dungeon = dungeonRepository.findById(gameMap.getDungeons().get(0).getId());
+        if(dungeon.getMonster() != null)
+            if(dungeon.getMonster().getHealth()>0)
+                return modelMapper.map(dungeon, DungeonDto.class);
+        if(dungeon.getWeapon() != null){
+            Player player = playerRepository.findById(gameMap.getPlayer().getId());
+            player.setWeapon(dungeon.getWeapon());
+            player.setDamage(player.getDamage() + dungeon.getWeapon().getDamage());
+            player = playerRepository.save(player);
+        }
+        if(dungeon.getHealing_potion() != null && dungeon.getHealing_potion()>0){
+            Player player = playerRepository.findById(gameMap.getPlayer().getId());
+            player.setHealing_potion(player.getHealing_potion() + dungeon.getHealing_potion());
+            player = playerRepository.save(player);
+        }
+
         gameMap.getDungeons().remove(0);
-        System.out.println(dungeon.getId());
-        System.out.println(dungeon.getMonster());
         gameMapRepository.save(gameMap);
         dungeonRepository.delete(dungeon);
         return modelMapper.map(dungeon, DungeonDto.class);
@@ -178,11 +214,98 @@ public class QoQServicesImplementation implements QoQServices {
     @Override
     public PlayerDto heal(PlayerDto playerDto) {
         ModelMapper modelMapper = new ModelMapper();
-        Player player = modelMapper.map(findPlayerById(playerDto.getId()), Player.class);
+        Player player = playerRepository.findById(playerDto.getId());
         if(player == null || player.getHealing_potion() == null) return null;
         player.setHealth(player.getHealth()+player.getHealing_potion());
-        player.setHealing_potion(null);
+        player.setHealing_potion(0);
         player = playerRepository.save(player);
         return modelMapper.map(player, PlayerDto.class);
+    }
+
+    @Override
+    public MonsterDto getMonsterById(Integer monsterId) {
+        ModelMapper modelMapper = new ModelMapper();
+        Monster monster = monsterRepository.findById(monsterId);
+        if(monster == null) return null;
+        return modelMapper.map(monster, MonsterDto.class);
+    }
+
+    @Override
+    public DungeonDto monsterDefeated(Integer id) {
+        Monster monster = monsterRepository.findById(id);
+        Dungeon dungeon = dungeonRepository.findById(monster.getDungeon().getId());
+        monsterRepository.delete(monster);
+        if(dungeon == null) return null;
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(dungeon, DungeonDto.class);
+    }
+
+    @Override
+    public MonsterDto monsterFight(Integer id, Integer idPlayer) {
+        Monster monster = monsterRepository.findById(id);
+        Player player = playerRepository.findById(idPlayer);
+        if(monster==null || player==null || monster.getHealth()<=0) {
+            return null;
+        }
+
+        monster.setHealth(monster.getHealth() - player.getDamage()*(int)(Math.ceil((Math.random()*6+1)/5)));
+        monster = monsterRepository.save(monster);
+        if(monster.getHealth()<=0){
+            ModelMapper mapper = new ModelMapper();
+            MonsterDto monsterDto = mapper.map(monster, MonsterDto.class);
+            if(monster.getName().contains("Quarken")){
+                monsterDto.setPlayerHealth(player.getHealth());
+                monsterDto.setName(monsterDto.getName()+" defeated, congratulations!");
+                player.setWeapon(monster.getWeapon());
+                monster.setWeapon(null);
+                monsterRepository.save(monster);
+                playerRepository.save(player);
+                return monsterDto;
+            }
+            monsterDto.setPlayerHealth(player.getHealth());
+            monsterDto.setName(monsterDto.getName()+" defeated, use /move to continue your adventure!");
+            return monsterDto;
+        }
+
+        player.setHealth(player.getHealth() - monster.getDamage()*(int)(Math.ceil((Math.random()*6+1)/5)));
+        player = playerRepository.save(player);
+        if(player.getHealth()<=0) {
+            ModelMapper mapper = new ModelMapper();
+            MonsterDto monsterDto = mapper.map(monster, MonsterDto.class);
+            monsterDto.setPlayerHealth(player.getHealth());
+            monsterDto.setName(monsterDto.getName()+" defeated you, good luck on your next adventure!");
+            return monsterDto;
+        }
+
+        ModelMapper mapper = new ModelMapper();
+        MonsterDto monsterDto = mapper.map(monster, MonsterDto.class);
+        monsterDto.setPlayerHealth(player.getHealth());
+        return monsterDto;
+    }
+
+    @Override
+    public PlayerDto getPlayerById(Integer playerId) {
+        Player player = playerRepository.findById(playerId);
+        if(player == null || player.getMap()==null) return null;
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(player, PlayerDto.class);
+    }
+
+    @Override
+    public DungeonDto flee(Integer id) {
+        GameMap gameMap = gameMapRepository.findById(id);
+        if(gameMap.getDungeons().size() < 2) return null;
+
+        Dungeon dungeon = dungeonRepository.findById(gameMap.getDungeons().get(1).getId());
+        Dungeon dungeonTemp = dungeonRepository.findById(gameMap.getDungeons().get(0).getId());
+
+        gameMap.getDungeons().remove(0);
+        gameMapRepository.save(gameMap);
+        dungeonRepository.delete(dungeonTemp);
+        Player player = playerRepository.findById(gameMap.getPlayer().getId());
+        player.setHealth(player.getHealth()-2);
+        playerRepository.save(player);
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(dungeon, DungeonDto.class);
     }
 }

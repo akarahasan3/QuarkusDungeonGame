@@ -1,8 +1,10 @@
 package com.codecta.qoq;
 
+import com.codecta.qoq.model.Player;
 import com.codecta.qoq.services.QoQServices;
 import com.codecta.qoq.services.dto.DungeonDto;
 import com.codecta.qoq.services.dto.GameMapDto;
+import com.codecta.qoq.services.dto.MonsterDto;
 import com.codecta.qoq.services.dto.PlayerDto;
 import org.modelmapper.ModelMapper;
 
@@ -30,8 +32,9 @@ public class QoQResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response start(){
         GameMapDto game = qoQServices.createMap();
-        if(game != null)
+        if(game != null) {
             return Response.ok(game).build();
+        }
         return Response.noContent().build();
     }
 
@@ -40,19 +43,16 @@ public class QoQResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response move(@PathParam("id") Integer id){
         GameMapDto gameMapDto = qoQServices.getMapById(id);
-        if(gameMapDto == null)
+        PlayerDto player = qoQServices.findPlayerById(gameMapDto.getPlayerId());
+        if(gameMapDto == null || player == null)
             return Response.status(Response.Status.NOT_FOUND).build();
-        //ModelMapper modelMapper = new ModelMapper();
+
+        if(player.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
+
         DungeonDto dungeonDto = qoQServices.getNextDungeon(gameMapDto);
 
         if(dungeonDto == null)
             return Response.status(Response.Status.NOT_FOUND).build();
-        if(dungeonDto.getMonsterId() != null)
-            return Response.status(201).entity("You encountered a monster!").build();
-        if(dungeonDto.getWeaponId() != null)
-            return Response.status(201).entity("You encountered a weapon!").build();
-        if(dungeonDto.getHealing_potion() != null)
-            return Response.status(201).entity("You encountered a potion!").build();
         return Response.ok(dungeonDto).build();
     }
 
@@ -61,6 +61,7 @@ public class QoQResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response heal(@PathParam("id") Integer id){
         PlayerDto playerDto = qoQServices.findPlayerById(id);
+        if(playerDto.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
         if(playerDto == null) return Response.status(404).entity("Player not found").build();
         GameMapDto gameMapDto = qoQServices.getMapById(playerDto.getMapId());
         if(gameMapDto == null) return Response.status(404).entity("Map not found").build();
@@ -68,5 +69,38 @@ public class QoQResource {
         playerDto = qoQServices.heal(playerDto);
         if(playerDto == null) return Response.status(Response.Status.BAD_REQUEST).entity("Error while healing").build();
         return Response.ok(playerDto).build();
+    }
+
+    @POST
+    @Path("{id}/flee")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response flee(@PathParam("id") Integer id){
+        GameMapDto gameMapDto = qoQServices.getMapById(id);
+        PlayerDto playerDto=qoQServices.findPlayerById(gameMapDto.getPlayerId());
+        if(gameMapDto == null || playerDto==null)
+            return Response.status(Response.Status.NOT_FOUND).build();
+        if(playerDto.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
+        DungeonDto dungeonDto = qoQServices.flee(gameMapDto.getId());
+        if(dungeonDto == null)
+            return Response.status(Response.Status.FORBIDDEN).build();
+        return Response.ok(dungeonDto).build();
+    }
+
+    @POST
+    @Path("{id}/fight")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response fight(@PathParam("id") Integer id){
+        GameMapDto gameMapDto = qoQServices.getMapById(id);
+        if(gameMapDto == null)
+            return Response.status(Response.Status.NOT_FOUND).build();
+        DungeonDto dungeonDto = qoQServices.getNextDungeon(gameMapDto);
+        MonsterDto monsterDto = qoQServices.getMonsterById(dungeonDto.getMonsterId());
+        PlayerDto playerDto = qoQServices.getPlayerById(gameMapDto.getPlayerId());
+        if(playerDto.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
+        if(monsterDto != null && monsterDto.getHealth()>0){
+            monsterDto = qoQServices.monsterFight(monsterDto.getId(), playerDto.getId());
+            return Response.ok(monsterDto).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }
