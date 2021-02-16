@@ -19,6 +19,7 @@ public class Monster extends ModelObject {
     private String name;
     private Integer health;
     private Integer damage;
+    private String monsterImage;
 
     @ManyToOne
     private Weapon weapon;
@@ -68,4 +69,12 @@ public class Monster extends ModelObject {
 
     @Override
     public Integer getId() { return this.id; }
+
+    public String getMonsterImage() {
+        return monsterImage;
+    }
+
+    public void setMonsterImage(String monsterImage) {
+        this.monsterImage = monsterImage;
+    }
 }

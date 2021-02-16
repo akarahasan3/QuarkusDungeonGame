@@ -5,6 +5,8 @@ import com.codecta.qoq.services.dto.GameMapDto;
 import com.codecta.qoq.services.dto.MonsterDto;
 import com.codecta.qoq.services.dto.PlayerDto;
 
+import java.util.List;
+
 public interface QoQServices {
 
     GameMapDto createMap();
@@ -26,4 +28,8 @@ public interface QoQServices {
     PlayerDto getPlayerById(Integer playerId);
 
     DungeonDto flee(Integer id);
+
+    DungeonDto getDungeonById(Integer id);
+
+    List<DungeonDto> getAllDungeons();
 }

@@ -6,6 +6,11 @@ public class DungeonDto {
     private Integer mapId;
     private Integer monsterId;
     private Integer weaponId;
+    private String gameOver;
+    private String weaponName;
+    private String monsterName;
+    private String monsterImage;
+    private Integer order;
 
     public Integer getId() {
         return id;
@@ -47,5 +52,43 @@ public class DungeonDto {
         this.weaponId = weaponId;
     }
 
+    public String getGameOver() {
+        return gameOver;
+    }
 
+    public void setGameOver(String gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public String getWeaponName() {
+        return weaponName;
+    }
+
+    public void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
+    }
+
+    public String getMonsterName() {
+        return monsterName;
+    }
+
+    public void setMonsterName(String monsterName) {
+        this.monsterName = monsterName;
+    }
+
+    public String getMonsterImage() {
+        return monsterImage;
+    }
+
+    public void setMonsterImage(String monsterImage) {
+        this.monsterImage = monsterImage;
+    }
 }

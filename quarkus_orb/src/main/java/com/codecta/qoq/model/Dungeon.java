@@ -16,6 +16,7 @@ public class Dungeon extends ModelObject {
     private Integer id;
 
     private Integer healing_potion;
+    private Integer dungeonOrder;
 
     @ManyToOne
     private GameMap map;
@@ -69,5 +70,13 @@ public class Dungeon extends ModelObject {
 
     public void setHealing_potion(Integer healing_potion) {
         this.healing_potion = healing_potion;
+    }
+
+    public Integer getDungeonOrder() {
+        return dungeonOrder;
+    }
+
+    public void setDungeonOrder(Integer dungeonOrder) {
+        this.dungeonOrder = dungeonOrder;
     }
 }

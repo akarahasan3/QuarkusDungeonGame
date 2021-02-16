@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.awt.*;
+import java.util.List;
 
 @Path("/game")
 public class QoQResource {
@@ -26,6 +27,16 @@ public class QoQResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response hello(){
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/monster/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMonster(@PathParam("id") Integer id){
+        MonsterDto monster = qoQServices.getMonsterById(id);
+        if(monster == null)
+            return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(monster).build();
     }
 
     @POST
@@ -47,8 +58,6 @@ public class QoQResource {
         if(gameMapDto == null || player == null)
             return Response.status(Response.Status.NOT_FOUND).build();
 
-        if(player.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
-
         DungeonDto dungeonDto = qoQServices.getNextDungeon(gameMapDto);
 
         if(dungeonDto == null)
@@ -61,13 +70,11 @@ public class QoQResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response heal(@PathParam("id") Integer id){
         PlayerDto playerDto = qoQServices.findPlayerById(id);
-        if(playerDto.getHealth()<=0) return Response.ok().entity("Game Over, try again!").build();
         if(playerDto == null) return Response.status(404).entity("Player not found").build();
         GameMapDto gameMapDto = qoQServices.getMapById(playerDto.getMapId());
         if(gameMapDto == null) return Response.status(404).entity("Map not found").build();
-        if(playerDto.getHealing_potion() == 0) return Response.status(200).entity("Can't heal, no potions!").build();
+        if(playerDto.getHealing_potion() == 0) return Response.ok(playerDto).build();
         playerDto = qoQServices.heal(playerDto);
-        if(playerDto == null) return Response.status(Response.Status.BAD_REQUEST).entity("Error while healing").build();
         return Response.ok(playerDto).build();
     }
 
@@ -84,6 +91,14 @@ public class QoQResource {
         if(dungeonDto == null)
             return Response.status(Response.Status.FORBIDDEN).build();
         return Response.ok(dungeonDto).build();
+    }
+
+    @GET
+    @Path("/dungeons")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllDungeons(){
+        List<DungeonDto> dungeonDtoList = qoQServices.getAllDungeons();
+        return Response.ok(dungeonDtoList).build();
     }
 
     @POST

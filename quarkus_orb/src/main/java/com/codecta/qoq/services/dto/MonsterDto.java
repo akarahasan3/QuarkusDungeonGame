@@ -11,6 +11,7 @@ public class MonsterDto {
     private Integer weaponId;
     private Integer dungeonId;
     private Integer playerHealth;
+    private String monsterImage;
 
     public Integer getPlayerHealth() {
         return playerHealth;
@@ -66,5 +67,13 @@ public class MonsterDto {
 
     public void setDungeonId(Integer dungeonId) {
         this.dungeonId = dungeonId;
+    }
+
+    public String getMonsterImage() {
+        return monsterImage;
+    }
+
+    public void setMonsterImage(String monsterImage) {
+        this.monsterImage = monsterImage;
     }
 }
