@@ -13,7 +13,7 @@ public class Dungeon extends ModelObject {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DungeonSeq")
     @Id
     @Column(name = "ID", nullable = false)
-    private Integer id;
+        private Integer id;
 
     private Integer healing_potion;
     private Integer dungeonOrder;
